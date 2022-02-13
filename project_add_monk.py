@@ -1,12 +1,15 @@
 import time
 import random
 
-#----------------------------------TO DO LIST----------------------------------------
+#-----------------------------------WISH LIST----------------------------------------
 
 #fine tune hp and dmg output
 #add an npc ally
+#change all functions so that they pass in global variables when called to avoid undefined variable errors
+#add a function called player_hits and strahd_hits for better english readability. or just hits, or something.
 
 #----------------------------FUNCTIONS - exposition----------------------------------
+
 
 def strahd_monologue():
   """Strahd being dramatic"""
@@ -93,7 +96,7 @@ def strahd_wins_bite():
   print("His teeth sink in to your neck. His skin is cold, but your blood starts turning it warm.")
 
 def ending_sequence():
-  """if player wins then describes Strahd's final moments. if Strahd wins, then plays final moment based on strahd's last move."""
+  """if player wins then describes Strahd's final moments. if Strahd wins, then describes player's final moment based on strahd's last move."""
 
   if player_hp <= 0:
     if strahd_last_move == "bite":
@@ -106,14 +109,18 @@ def ending_sequence():
 
 #----------------------------FUNCTIONS - player actions---------------------------------
 
+
 def ask_for_name():
+
   name = input("What is your name? ")
   print()
   return name
+  
 
 def ask_for_class():
   """describes the three class options and prompts the player to pick one. Contains a while loop catch for invalid answers."""
 
+  #explains options to player:
   print("What's your specialty? Options:")
   print()
   print("FIGHTER")
@@ -127,7 +134,9 @@ def ask_for_class():
   print("MONK")
   print("Attack: punch five times in a flurry of blows.")
   print("Special: paralyze Strahd for a turn with a Stunning Strike (three times max).")
-  print("")  
+  print("")
+
+  #prompts player to choose one with a while True catch for invalid answers, repeats it back to them.
   while True:
     class_choice = input("Are you a FIGHTER, a CASTER, or a MONK? ")
     if class_choice.lower() not in ["fighter", "caster", "monk"]:
@@ -136,16 +145,20 @@ def ask_for_class():
       break
   print(f"Great, a powerful {class_choice.lower()}.")
   print()
+
   return class_choice
 
-def initiative_roll():
-  """prompts the player with "input" to roll a d20 to see who goes first(says enter but any key stroke would work). Contains a while loop catch for the roll being equal to Strahd's initative."""
 
+def initiative_roll():
+  """prompts the player with "input" to roll a d20 to see who goes first."""
+
+  #says to press ENTER but any key stroke will work
   input("Roll your D20 to see who goes first by pressing ENTER. ")
   initiative = random.randint(1,20)
 
   print(f"Result: {initiative}.")
 
+  #while True loop to catch the condition of Strahd initiative == player initiative
   while True:
     if initiative == strahd_initiative:
       input("Roll again.")
@@ -160,6 +173,7 @@ def initiative_roll():
 
   return initiative
 
+
 def attack_roll():
   """prompts the player to roll a d20 to see if their attack hits. Adds the player's attack modifier to the resultant roll. Returns the roll."""
 
@@ -169,8 +183,9 @@ def attack_roll():
   print(f"Result: {to_hit}")
   return to_hit
 
+
 def attack_action():
-  """attacks based on player's attack stats - number of attacks, attack mod, damage dice"""
+  """attacks based on player's attack stats - number of attacks, attack mod, damage dice. Accumulates and returns damage dealt."""
 
   attack_damage_accumulator = 0
   attack_counter = 0
@@ -183,7 +198,7 @@ def attack_action():
     else:
       print("Ouch, you missed.")
     attack_counter += 1
-  
+
   print(f"You did {attack_damage_accumulator} damage.")
   time.sleep(1)
   return attack_damage_accumulator
@@ -198,6 +213,7 @@ def second_wind():
   print()
   time.sleep(1)
   return hp_gain
+
 
 def dawn():
   """this is the caster's special move. describes the spell and accumulates and returns damage"""
@@ -215,9 +231,10 @@ def dawn():
   print()
   time.sleep(1)
   return dawn_damage
-  
+
+
 def stunning_strike():
-  """this is the monk's special move. does a small amount of damage and returns stunned status to Strahd."""
+  """this is the monk's special move. does a single attack with a larger than normal amount of damage and returns stunned status to Strahd."""
   
   if attack_roll() >= STRAHD_AC:
     print("You hit!")
@@ -232,41 +249,56 @@ def stunning_strike():
 #----------------------------FUNCTIONS - Strahd actions---------------------------------
 
 def strahd_bite():
-  """rolls a d20 and adds 12 to hit. rolls 2d6 for damage."""
+  """rolls a d20 and adds 12 to hit. rolls 2d6 for damage. Returns damage and updates Strahd's last move."""
 
   bite_damage = 0
 
-  if random.randint(1,20) + 12 >= PLAYER_AC:
+  if random.randint(1,20) + STRAHD_ATTACK_MOD >= PLAYER_AC: #if Strahd hits
+
     print("Strahd sinks his fangs into you!")
+    
+    #roll 2d6
     i = 0
     while i < 2:
       bite_damage += random.randint(1,6)
       i += 1
+    
     print(f"Strahd did {bite_damage} damage.")
+
   else:
     print("Strahd lunges for your exposed neck but misses!")
   
   return (bite_damage, "bite")
 
+
 def strahd_claws():
-  """Rolls a d20 plus 12 to hit. Rolls a d4 + 2 for damage. Repeats."""
+  """Rolls a d20 plus 12 to hit. Rolls a d4 + 2 for damage. Repeats. Returns damage and updates Strahd's last move."""
+
   print("Strahd extends his claws and rears back with both hands.")
 
   claw_damage_accumulator = 0
   attack_counter = 0
 
+  #while loop to capture two attacks, one from each hand
   while attack_counter < 2:
+    
     attack_to_hit = random.randint(1,20) + STRAHD_ATTACK_MOD
-    if attack_to_hit >= PLAYER_AC:
+
+    if attack_to_hit >= PLAYER_AC: #if Strahd hits
+
       print("Strahd slashes at you with a claw.")
       damage = random.randint(1,4) + 2
       claw_damage_accumulator += damage
+
     else:
+
       print("You are just out of his reach!")
+    
     attack_counter += 1
   
   print(f"Strahd did {claw_damage_accumulator} damage.")
   return (claw_damage_accumulator, "claw")
+
 
 def strahd_attack_action():
   """randomizes Strahd's claw attack or bite attack"""
@@ -361,52 +393,62 @@ conceit()
 
 player_initiative = initiative_roll()
 
-#declaring a variable to make turn count identifiers more streamlined. if player goes first, player goes on even turns, or turns where turn_count % 2 == 0, meaning player_turn_mod = 0. otherwise, player goes on odd turns, or turns where turn_count % 2 == 1, so player_turn_mod = 1
+#if player goes first, player goes on even turns, or turns where turn_count % 2 == 0, meaning player_turn_mod = 0. otherwise, player goes on odd turns, or turns where turn_count % 2 == 1, so player_turn_mod = 1
+
 if player_initiative > strahd_initiative:
   player_turn_mod = 0
 else:
   player_turn_mod = 1
 
+#gameplay/turn alternator
+
 while player_hp > 0 and strahd_hp > 0: #while both strahd and player are up and fighting
-  if turn_count % 2 == player_turn_mod: #if turn count mod 2 matches player turn count mod
-    #player turn
-    while True: #loop to capture no more specials or invalid choices
+
+  if turn_count % 2 == player_turn_mod: #if it's currently player's turn:
+
+    while True: #loop to capture invalid choices (miskeys or attempts to SPECIAL too many times)
       player_choice = input("What would you like to do? ATTACK or SPECIAL? ")
-      if player_choice.lower() == "attack": #attack is a valid choice always, breaks the loop
+
+      if player_choice.lower() == "attack": #ATTACK is a valid choice always, breaks the loop
         strahd_hp -= attack_action()
         strahd_status()
         print()
         break
+
       elif player_choice.lower() == "special":
         if player_special_count <= 0: #if the player can't use any more specials, does not break the loop, asks again
           print("No specials left!")
         else: #if player DOES have more specials left, carries out special move and breaks the loop
-          if player_class.title() == FIGHTER_ATTRIBUTES["CLASS"]: #if player chose fighter
+          if player_class.title() == FIGHTER_ATTRIBUTES["CLASS"]: #if player chose fighter, use second wind
             player_hp += second_wind()
-          elif player_class.title() == CASTER_ATTRIBUTES["CLASS"]: #if player chose caster
+          elif player_class.title() == CASTER_ATTRIBUTES["CLASS"]: #if player chose caster, use dawn
             strahd_hp -= dawn()
             strahd_status()
             print()
-          elif player_class.title() == MONK_ATTRIBUTES["CLASS"]: #if player chose monk
+          elif player_class.title() == MONK_ATTRIBUTES["CLASS"]: #if player chose monk, use stunning strike
             monk_attack = stunning_strike()
             strahd_hp -= monk_attack[0]
             strahd_stunned = monk_attack[1]
           player_special_count -= 1
           break
+
       else:
         print("That's not in your moveset.")
-  else:
-    #strahd turn
-    if strahd_stunned == False:
+
+  else: #if it's currently strahd's turn
+
+    if strahd_stunned == False: #if strahd is not currently stunned, proceed with his attack action
         strahd_turn = strahd_attack_action()
         player_hp -= strahd_turn[0] #reduce player hp by whatever strahd attack action returns
         strahd_last_move = strahd_turn[1] #update strahd's last move to either "claw" or "bite" depending on which action he performed
     else:
         print("Strahd is stunned!")
         print()
-        strahd_stunned = False
-    if player_hp > 0:
+        strahd_stunned = False #remove stunned status at end of turn
+
+    if player_hp > 0: #if player's hp has not been reduced beyond 0
       print(f"Your remaining hp: {player_hp}.")
-  turn_count += 1
+
+  turn_count += 1 #increment turn count
 
 ending_sequence()
