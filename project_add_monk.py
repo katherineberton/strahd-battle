@@ -1,111 +1,26 @@
 import time
 import random
+from strahd_battle_exposition import strahd_monologue, conceit, player_wins, strahd_status, strahd_wins_claw, strahd_wins_bite
 
 #-----------------------------------WISH LIST----------------------------------------
 
 #fine tune hp and dmg output
 #add an npc ally
-#change all functions so that they pass in global variables when called to avoid undefined variable errors
+#change all remaining functions so that they pass in global variables when called to avoid undefined variable errors
 #add a function called player_hits and strahd_hits for better english readability. or just hits, or something.
 
 #----------------------------FUNCTIONS - exposition----------------------------------
-
-
-def strahd_monologue():
-  """Strahd being dramatic"""
-  print("'You.'")
-  time.sleep(2)
-  print("'You have been a thorn in my side since you came to Barovia.'")
-  time.sleep(2)
-  print("'I invited you into my home. I have been a gracious host. And despite this...'")
-  time.sleep(2)
-  print("'You CONTINUE TO DEFY ME.'")
-  time.sleep(2)
-  print("'You rebuff my extensions of grace, you disrupt local businesses, you upset my citizens, and you damage local ecosystems.'")
-  time.sleep(2)
-  print("'I thought we could be useful to each other. It's clear that you are far more trouble than you're worth.'")
-  time.sleep(2)
-  print("'Now die, and your soul will be mine forever.'")
-  time.sleep(3)
-  print("Strahd lunges at you.")
-  print("----------------------------------------------------------------")
-  print()
-
-def conceit():
-  """explains the stakes of the fight"""
-  print("The time has come! This is your last chance to escape Barovia and go home!")
-  print("He's strong, but so are you. You can do this.")
-  print("If you defeat him, the mists will dissipate, and you'll be free.")
-  print()
-
-def strahd_status():
-  """lets the player know how close they are to defeating Strahd by his remaining HP"""
-
-  if strahd_hp/STRAHD_MAX_HP > .75:
-    pass
-  elif .5 < strahd_hp/STRAHD_MAX_HP <= .75:
-    print("Strahd seems enraged.")
-  elif .25 <= strahd_hp/STRAHD_MAX_HP <= .5:
-    print("You can see fear in Strahd's eyes.")
-  elif strahd_hp <= 0:
-    pass
-  else:
-    print("Strahd can barely stand. Finish him!")
-
-def player_wins():
-  """describes Strahd's final moments"""
-
-  print("STRAHD FALLS TO THE GROUND.")
-  time.sleep(3)
-  print("His claws twitch. His head lolls to the side.")
-  time.sleep(2)
-  print("Suddenly...")
-  time.sleep(2)
-  print("He bursts into a cloud of smoke. The smoke hangs in the air, lingering a moment... and it feels like it's looking at you.")
-  time.sleep(2)
-  print("With haste, it moves for the door and fills the cracks and keyholes.")
-  time.sleep(2)
-  print("Then it's gone.")
-  time.sleep(3)
-  print("You look outside and for the first time in months you see... sunlight.")
-
-def strahd_wins_claw():
-  """describes player's final moments with a claw swipe as Strahd's final action"""
-
-  print("Strahd is just too powerful. He pins you to the floor, his claws at your neck, and he leans in close.")
-  time.sleep(2)
-  print(f"'I have ruled this land for centuries, {player_name}. I have quashed dozens of insurrections and prevented hundreds more.'")
-  time.sleep(2)
-  print(f"'Imagine the arrogance to think you, a {player_class}, were somehow different from the rest.'")
-  time.sleep(2)
-  print("'No matter. You think since your demise is imminent, you are free, but you are not. The mists don't just cage the living. They cage everything.'")
-  time.sleep(2)
-  print("'Now your soul can spend eternity trapped in this place like me!'")
-
-def strahd_wins_bite():
-  """describes player's final moments with a bite as Strahd's final action"""
-
-  print("Strahd is just too strong. He pins you to the floor, his claws at your neck, and he leans in close.")
-  time.sleep(2)
-  print(f"'I have ruled this land for centuries, {player_name}. I have quashed dozens of insurrections and prevented hundreds more.'")
-  time.sleep(2)
-  print("'But you... you are the only one who has come this far.'")
-  time.sleep(2)
-  print(f"'Despite our differences, I think you can still serve a purpose. You have some power, {player_class}. Watch me make you even more powerful.'")
-  time.sleep(2)
-  print("His teeth sink in to your neck. His skin is cold, but your blood starts turning it warm.")
 
 def ending_sequence():
   """if player wins then describes Strahd's final moments. if Strahd wins, then describes player's final moment based on strahd's last move."""
 
   if player_hp <= 0:
     if strahd_last_move == "bite":
-      strahd_wins_bite()
+      strahd_wins_bite(p_name=player_name, p_class=player_class)
     else:
-      strahd_wins_claw()
+      strahd_wins_claw(p_name=player_name, p_class=player_class)
   else:
     player_wins()
-
 
 #----------------------------FUNCTIONS - player actions---------------------------------
 
@@ -411,7 +326,7 @@ while player_hp > 0 and strahd_hp > 0: #while both strahd and player are up and 
 
       if player_choice.lower() == "attack": #ATTACK is a valid choice always, breaks the loop
         strahd_hp -= attack_action()
-        strahd_status()
+        strahd_status(current_hp=strahd_hp,max_hp=STRAHD_MAX_HP)
         print()
         break
 
@@ -423,7 +338,7 @@ while player_hp > 0 and strahd_hp > 0: #while both strahd and player are up and 
             player_hp += second_wind()
           elif player_class.title() == CASTER_ATTRIBUTES["CLASS"]: #if player chose caster, use dawn
             strahd_hp -= dawn()
-            strahd_status()
+            strahd_status(current_hp=strahd_hp,max_hp=STRAHD_MAX_HP)
             print()
           elif player_class.title() == MONK_ATTRIBUTES["CLASS"]: #if player chose monk, use stunning strike
             monk_attack = stunning_strike()
