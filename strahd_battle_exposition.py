@@ -1,16 +1,14 @@
+import random
 import time
 
-#move exposition functions here once I figure out how to get around the undefined variables
-#possibly will have to pare down these functions so they don't relate to variables in the main file?
-#maybe databases will help?
-#maybe passing in variables as parameters will help instead of trying to use global ones?
+#ask simon if it's poor form to have a function that needs so many parameters
 
-#list of problem items:
-#strahd_status, because it needs strahd_max_hp and strahd_hp
-#strahd_wins_claw because it needs player_name and player_class
-#strahd_wins_bite because it needs player_name and player_class
-#ending_sequence because it needs player_hp and strahd_last_move
 
+
+#-----------------------------------INTRODUCTIONS AND INFORMATION------------------------------------------
+
+
+#strahd intro
 def strahd_monologue():
   """Strahd intro monologue"""
   print("'You.'")
@@ -32,6 +30,7 @@ def strahd_monologue():
   print()
 
 
+#game explanation
 def conceit():
   """explains the stakes of the fight"""
   print("The time has come! This is your last chance to escape Barovia and go home!")
@@ -40,6 +39,46 @@ def conceit():
   print()
 
 
+#class options
+def describe_classes():
+  
+  print("What's your specialty? Options:")
+  print()
+  print("FIGHTER")
+  print("Attack: swing three times with your sword (unlimited).")
+  print("Special: use Second Wind to gain HP (three times max).")
+  print()
+  print("CASTER")
+  print("Attack: fire two Eldritch Blasts (unlimited).")
+  print("Special: envelop Strahd in sunlight with Dawn (twice max).")
+  print()
+  print("MONK")
+  print("Attack: punch five times in a flurry of blows (unlimited).")
+  print("Special: paralyze Strahd for a turn with a Stunning Strike (three times max).")
+  print("")
+
+
+#strahd appearance
+def strahd_status(current_hp, max_hp):
+  """lets the player know how close they are to defeating Strahd by his remaining HP"""
+
+  if current_hp/max_hp > .75:
+    pass
+  elif .5 < current_hp/max_hp <= .75:
+    print("Strahd seems enraged.")
+  elif .25 <= current_hp/max_hp <= .5:
+    print("You can see fear in Strahd's eyes.")
+  elif current_hp <= 0:
+    pass
+  else:
+    print("Strahd can barely stand. Finish him!")
+
+
+
+#--------------------------------------POST BATTLE OUTROS----------------------------------------
+
+
+#player win outro
 def player_wins():
   """describes Strahd's final moments"""
 
@@ -58,22 +97,7 @@ def player_wins():
   print("You look outside and for the first time in months you see... sunlight.")
 
 
-def strahd_status(current_hp, max_hp):
-  """lets the player know how close they are to defeating Strahd by his remaining HP"""
-
-  if current_hp/max_hp > .75:
-    pass
-  elif .5 < current_hp/max_hp <= .75:
-    print("Strahd seems enraged.")
-  elif .25 <= current_hp/max_hp <= .5:
-    print("You can see fear in Strahd's eyes.")
-  elif current_hp <= 0:
-    pass
-  else:
-    print("Strahd can barely stand. Finish him!")
-
-
-
+#strahd final blow claw outro
 def strahd_wins_claw(p_name, p_class):
   """describes player's final moments with a claw swipe as Strahd's final action"""
 
@@ -88,7 +112,7 @@ def strahd_wins_claw(p_name, p_class):
   print("'Now your soul can spend eternity trapped in this place like me!'")
 
 
-
+#strahd final blow bite outro
 def strahd_wins_bite(p_name, p_class):
   """describes player's final moments with a bite as Strahd's final action"""
 
@@ -103,3 +127,14 @@ def strahd_wins_bite(p_name, p_class):
   print("His teeth sink in to your neck. His skin is cold, but your blood starts turning it warm.")
 
 
+#tests conditions at end of game and plays the appropriate outro
+def ending_sequence(p_hp, last_move, p_name, p_class):
+  """if player wins then describes Strahd's final moments. if Strahd wins, then describes player's final moment based on strahd's last move."""
+
+  if p_hp <= 0: #if player lost
+    if last_move == "bite":
+      strahd_wins_bite(p_name, p_class)
+    elif last_move == "claw":
+      strahd_wins_claw(p_name, p_class)
+  else:
+    player_wins()
