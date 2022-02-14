@@ -1,0 +1,7 @@
+
+#-----------------------------------WISH LIST----------------------------------------
+
+#fine tune hp and dmg output
+#add an npc ally
+#change attack roll function to hits funciton that returns True or False instead of a number
+    #is this possible while still displaying the result of the roll for player fun? return tuple?
