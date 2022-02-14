@@ -59,7 +59,7 @@ MONK_ATTRIBUTES = {"CLASS": "Monk",
 
 #------------------------------------INTRO AND SETUP----------------------------------------
 
-
+strahd_ascii('strahd_ascii.txt')
 strahd_monologue()
 
 #prompting for player's name after printing Strahd's opening monologue for style reasons

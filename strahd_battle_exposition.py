@@ -1,3 +1,4 @@
+from fileinput import filename
 import random
 import time
 
@@ -6,6 +7,12 @@ import time
 
 
 #-----------------------------------INTRODUCTIONS AND INFORMATION------------------------------------------
+
+
+#strahd_ascii
+def strahd_ascii(filename):
+  for line in open(filename):
+    print(line)
 
 
 #strahd intro
