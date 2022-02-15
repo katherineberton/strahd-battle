@@ -12,7 +12,7 @@ import time
 #strahd_ascii
 def strahd_ascii(filename):
   for line in open(filename):
-    print(line)
+    print(line, end="")
 
 
 #strahd intro
@@ -65,9 +65,9 @@ def describe_classes():
   print("")
 
 
-#strahd appearance
+#strahd battle weariness
 def strahd_status(current_hp, max_hp):
-  """lets the player know how close they are to defeating Strahd by his remaining HP"""
+  """lets the player know how roughed up Strahd looks by his remaining HP"""
 
   if current_hp/max_hp > .75:
     pass
