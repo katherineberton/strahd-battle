@@ -137,9 +137,10 @@ def stunning_strike(attack_mod, competing_ac):
   this function returns a tuple with damage dealt and stunned status."""
   
   if attack_roll(attack_mod) >= competing_ac:
-    print("You hit!")
-    print()
     damage = random.randint(1,10)
+    print("You hit!")
+    print(f"You did {damage} damage.")
+    print()
     return (damage, True)
   else:
     print("Your punch bounces off his armor and Strahd shakes off the stun.")
