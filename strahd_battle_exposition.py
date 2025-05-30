@@ -1,5 +1,6 @@
 import time
-from characters import  Fighter, Caster, Monk
+from typing import Optional
+from characters import  Fighter, Caster, Monk, PlayerClass
 
 class Exposition:
   name: str
@@ -82,12 +83,12 @@ player_wins = Exposition(
   description="What player sees when they defeat Strahd and escape Barovia"
 )
 
-def _get_strahd_wins_bite_lines(player):
+def _get_strahd_wins_bite_lines(player: Optional[PlayerClass] = None):
   return [
     "Strahd is just too strong. He pins you to the floor, his claws at your neck, and he leans in close.",
-    f"'I have ruled this land for centuries, {player.name}. I have quashed dozens of insurrections and prevented hundreds more.'",
+    f"'I have ruled this land for centuries, {player.name if player else 'bitch'}. I have quashed dozens of insurrections and prevented hundreds more.'",
     "'But you... you are the only one who has come this far.'",
-    f"'Despite our differences, I think you can still serve a purpose. You have some power, {player.class_name}. Watch me make you even more powerful.'",
+    f"'Despite our differences, I think you can still serve a purpose. You have some power, {player.class_name if player else 'stupid fuck'}. Watch me make you even more powerful.'",
     "His teeth sink in to your neck. His skin is cold, but your blood starts turning it warm.",
   ]
 strahd_wins_bite = Exposition(
@@ -96,11 +97,11 @@ strahd_wins_bite = Exposition(
   description="What player sees when Strahd wins with a bite"
 )
 
-def _get_strahd_wins_claw_lines(player):
+def _get_strahd_wins_claw_lines(player: Optional[PlayerClass] = None):
   return [
     "Strahd is just too powerful. He pins you to the floor, his claws at your neck, and he leans in close.",
-    f"'I have ruled this land for centuries, {player.name}. I have quashed dozens of insurrections and prevented hundreds more.'",
-    "'Imagine the arrogance to think you, a {player.class_name}, were somehow different from the rest.'",
+    f"'I have ruled this land for centuries, {player.name if player else 'bitch'}. I have quashed dozens of insurrections and prevented hundreds more.'",
+    f"'Imagine the arrogance to think you, a {player.class_name if player else 'stupid fuck'}, were somehow different from the rest.'",
     "'No matter. You think since your demise is imminent, you are free, but you are not. The mists don't just cage the living. They cage everything.'",
     "'Now your soul can spend eternity trapped in this place like me!'",
   ]

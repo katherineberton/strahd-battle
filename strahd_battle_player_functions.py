@@ -1,37 +1,9 @@
 import random
 import time
 
-#ask simon if it's poor form to have a function that needs so many parameters
-
 
 
 #--------------------------------------PLAYER SETUP------------------------------------------
-
-
-#get player name
-def ask_for_name():
-
-  name = input("What is your name? ")
-  print()
-  return name
-
-
-#get player class
-def ask_for_class(options):
-  """prompts the player to pick a class."""
-
-  #while True catch for invalid answers, repeats choice back
-  while True:
-    class_choice = input("Are you a FIGHTER, a CASTER, or a MONK? ")
-    if class_choice.lower() not in options:
-      print("That was not on the list. Are you a FIGHTER, a CASTER, or a MONK?")
-    else:
-      break
-  print(f"Great, a powerful {class_choice.lower()}.")
-  print()
-
-  return class_choice
-
 
 def initiative_roll(competing_initiative):
   """prompts the player with "input" to roll a d20 to see who goes first."""

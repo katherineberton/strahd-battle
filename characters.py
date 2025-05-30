@@ -42,17 +42,20 @@ class PlayerClass:
         attack_counter = 0
 
         while attack_counter < self.attacks_per_attack_action:
-            if self.attack_roll(self.attack_mod) >= competing_ac:
+            if self.attack_roll() >= competing_ac:
                 print("You hit!")
                 damage = random.randint(1,self.damage_dice)
                 attack_damage_accumulator += damage
             else:
                 print("Ouch, you missed.")
-                attack_counter += 1
+            attack_counter += 1
 
         print(f"You did {attack_damage_accumulator} damage.")
         time.sleep(1)
         return attack_damage_accumulator
+    
+    def special(self, competing_ac: int):
+        self.current_specials -= 1
 
     def take_damage(self, damage: int) -> None:
         self.current_hp -= damage
@@ -76,7 +79,7 @@ class Fighter(PlayerClass):
     attack_move_description = "Swing three times with your sword (unlimited)."
     special_move_description = "Use Second Wind to gain HP (three times max)."
 
-    def special(self):
+    def special(self, competing_ac: int):
         print("You use Second Wind!")
         input("Roll a D4 by pressing ENTER. ")
         hp_gain = random.randint(1,4) + 1
@@ -85,7 +88,10 @@ class Fighter(PlayerClass):
         print()
         time.sleep(1)
         self.current_hp += hp_gain
+
+        super().special(competing_ac)
         return MoveResult(damage=0, strahd_stunned=False)
+    
 
 class Caster(PlayerClass):
     class_name = "fighter"
@@ -98,7 +104,7 @@ class Caster(PlayerClass):
     attack_move_description = "Fire two Eldritch Blasts (unlimited)."
     special_move_description = "Envelop Strahd in sunlight with Dawn (twice max)."
 
-    def special(self):
+    def special(self, competing_ac: int):
         print("A massive cylinder of searing light appears around Strahd.")
         input("Press ENTER to roll for damage. ")
         dawn_damage = 0
@@ -111,7 +117,9 @@ class Caster(PlayerClass):
         print(f"You did {dawn_damage} damage.")
         print()
         time.sleep(1)
-        return MoveResult(damage=dawn_damage, status_effect=None)
+
+        super().special(competing_ac)
+        return MoveResult(damage=dawn_damage, strahd_stunned=False)
 
 class Monk(PlayerClass):
     class_name = "monk"
@@ -125,7 +133,8 @@ class Monk(PlayerClass):
     special_move_description = "Try to paralyze Strahd for a turn with a Stunning Strike (three times max)."
 
     def special(self, competing_ac: int):
-        if self.attack_roll(self.attack_mod) >= competing_ac:
+        super().special(competing_ac)
+        if self.attack_roll() >= competing_ac:
             damage = random.randint(1,10)
             print("You hit!")
             print(f"You did {damage} damage.")

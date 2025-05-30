@@ -3,6 +3,7 @@ import random
 from strahd_battle_exposition import *
 from strahd_battle_player_functions import *
 from strahd_battle_strahd_functions import *
+from prompts import ask_for_name, ask_for_class
 
 
 
@@ -62,33 +63,9 @@ MONK_ATTRIBUTES = {"CLASS": "Monk",
 ascii_art.print()
 intro_monologue.play()
 
-#prompting for player's name after printing Strahd's opening monologue for style reasons
 player_name = ask_for_name().title()
 classes.print()
-player_class = ask_for_class(options=class_options)
-
-#declares other attributes based on the player's class choice
-if player_class.lower() == FIGHTER_ATTRIBUTES["CLASS"].lower():
-  player_hp = FIGHTER_ATTRIBUTES["MAX HP"]
-  PLAYER_AC = FIGHTER_ATTRIBUTES["AC"]
-  PLAYER_ATTACK_MOD = FIGHTER_ATTRIBUTES["ATTACK MOD"]
-  PLAYER_NUM_ATTACKS = FIGHTER_ATTRIBUTES["NUM ATTACKS"]
-  PLAYER_DAMAGE_DICE = FIGHTER_ATTRIBUTES["DAMAGE DICE"]
-  player_special_count = FIGHTER_ATTRIBUTES["MAX SPECIALS"]
-elif player_class.lower() == CASTER_ATTRIBUTES["CLASS"].lower():
-  player_hp = CASTER_ATTRIBUTES["MAX HP"]
-  PLAYER_AC = CASTER_ATTRIBUTES["AC"]
-  PLAYER_ATTACK_MOD = CASTER_ATTRIBUTES["ATTACK MOD"]
-  PLAYER_NUM_ATTACKS = CASTER_ATTRIBUTES["NUM ATTACKS"]
-  PLAYER_DAMAGE_DICE = CASTER_ATTRIBUTES["DAMAGE DICE"]
-  player_special_count = CASTER_ATTRIBUTES["MAX SPECIALS"]
-elif player_class.lower() == MONK_ATTRIBUTES["CLASS"].lower():
-  player_hp = MONK_ATTRIBUTES["MAX HP"]
-  PLAYER_AC = MONK_ATTRIBUTES["AC"]
-  PLAYER_ATTACK_MOD = MONK_ATTRIBUTES["ATTACK MOD"]
-  PLAYER_NUM_ATTACKS = MONK_ATTRIBUTES["NUM ATTACKS"]
-  PLAYER_DAMAGE_DICE = MONK_ATTRIBUTES["DAMAGE DICE"]
-  player_special_count = MONK_ATTRIBUTES["MAX SPECIALS"]
+player = ask_for_class(player_name)
 
 conceit.print()
 
@@ -107,59 +84,46 @@ else:
 #------------------------------GAMEPLAY/TURN ALTERNATOR-------------------------------------
 
 
-while player_hp > 0 and strahd_hp > 0: #while both strahd and player are up and fighting
-
-  if turn_count % 2 == player_turn_mod: #if it's currently player's turn:
-
+while player.current_hp > 0 and strahd_hp > 0: #While both Strahd and player are up and fighting
+  # If it's currently player's turn:
+  if turn_count % 2 == player_turn_mod:
     while True: #loop to capture invalid choices (miskeys or attempts to SPECIAL too many times)
-      player_choice = input("What would you like to do? ATTACK or SPECIAL? ")
+      player_move = input("What would you like to do? ATTACK or SPECIAL? ")
 
-      if player_choice.lower() == "attack": #ATTACK is a valid choice always, breaks the loop
-        strahd_hp -= attack_action(num_attacks=PLAYER_NUM_ATTACKS,
-                                   attack_mod=PLAYER_ATTACK_MOD,
-                                   competing_ac=STRAHD_AC,
-                                   damage_dice=PLAYER_DAMAGE_DICE)
+      if player_move.lower() == "attack":
+        strahd_hp -= player.attack_action(competing_ac=STRAHD_AC)
         strahd_status(current_hp=strahd_hp,max_hp=STRAHD_MAX_HP)
         print()
         break
 
-      elif player_choice.lower() == "special":
-        if player_special_count <= 0: #if the player can't use any more specials, does not break the loop, asks again
+      elif player_move.lower() == "special":
+        if player.current_specials <= 0:
           print("No specials left!")
-        else: #if player DOES have more specials left, carries out special move and breaks the loop
-          if player_class.title() == FIGHTER_ATTRIBUTES["CLASS"]: #if player chose fighter, use second wind
-            player_hp += second_wind()
-          elif player_class.title() == CASTER_ATTRIBUTES["CLASS"]: #if player chose caster, use dawn
-            strahd_hp -= dawn()
-            strahd_status(current_hp=strahd_hp,max_hp=STRAHD_MAX_HP)
-            print()
-          elif player_class.title() == MONK_ATTRIBUTES["CLASS"]: #if player chose monk, use stunning strike
-            monk_attack = stunning_strike(attack_mod=PLAYER_ATTACK_MOD, competing_ac=STRAHD_AC)
-            strahd_hp -= monk_attack[0]
-            strahd_stunned = monk_attack[1]
-          player_special_count -= 1
+        else:
+          results = player.special(competing_ac=STRAHD_AC)
+          strahd_hp -= results.damage
+          strahd_stunned = results.strahd_stunned
           break
 
       else:
         print("That's not in your moveset.")
-
-  else: #if it's currently strahd's turn
-
-    if strahd_stunned == False: #if strahd is not currently stunned, proceed with his attack action
-        strahd_turn = strahd_attack_action(attack_mod=STRAHD_ATTACK_MOD, competing_ac=PLAYER_AC)
-        player_hp -= strahd_turn[0] #reduce player hp by whatever strahd attack action returns
-        strahd_last_move = strahd_turn[1] #update strahd's last move to either "claw" or "bite" depending on which action he performed
+  # If it's currently Strahd's turn
+  else:
+    if strahd_stunned == False:
+        strahd_turn = strahd_attack_action(competing_ac=player.armor_class)
+        player.take_damage(strahd_turn[0])
+        strahd_last_move = strahd_turn[1]
     else:
-        print("Strahd is stunned!")
+        print("Strahd is stunned! He strains to lunge at you but he's too stiff to move.")
         print()
-        strahd_stunned = False #remove stunned status at end of turn
+        strahd_stunned = False # Remove stunned status after one turn
 
-    if player_hp > 0: #if player's hp has not been reduced beyond 0
-      print(f"Your remaining hp: {player_hp}.")
+    if player.current_hp > 0:
+      print(f"Your remaining hp: {player.current_hp}.")
 
   turn_count += 1 #increment turn count
 
-ending_sequence(p_hp=player_hp,
+ending_sequence(p_hp=player.current_hp,
                 last_move=strahd_last_move,
                 p_name=player_name,
-                p_class=player_class)
+                p_class=player.class_name)
