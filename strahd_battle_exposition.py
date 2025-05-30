@@ -68,7 +68,47 @@ classes = Exposition(
   lines=_get_describe_classes_lines(),
   description="Describes the classes"
 )
+player_wins = Exposition(
+  name="player_wins",
+  lines=[
+    "STRAHD FALLS TO THE GROUND.",
+    "His claws twitch. His head lolls to the side.",
+    "Suddenly...",
+    "He bursts into a cloud of smoke. The smoke hangs in the air, lingering a moment... and it feels like it's looking at you.",
+    "With haste, it moves for the door and fills the cracks and keyholes.",
+    "Then it's gone.",
+    "You look outside and for the first time in months you see... sunlight.",
+  ],
+  description="What player sees when they defeat Strahd and escape Barovia"
+)
 
+def _get_strahd_wins_bite_lines(player):
+  return [
+    "Strahd is just too strong. He pins you to the floor, his claws at your neck, and he leans in close.",
+    f"'I have ruled this land for centuries, {player.name}. I have quashed dozens of insurrections and prevented hundreds more.'",
+    "'But you... you are the only one who has come this far.'",
+    f"'Despite our differences, I think you can still serve a purpose. You have some power, {player.class_name}. Watch me make you even more powerful.'",
+    "His teeth sink in to your neck. His skin is cold, but your blood starts turning it warm.",
+  ]
+strahd_wins_bite = Exposition(
+  name="strahd_wins_bite",
+  lines=_get_strahd_wins_bite_lines(),
+  description="What player sees when Strahd wins with a bite"
+)
+
+def _get_strahd_wins_claw_lines(player):
+  return [
+    "Strahd is just too powerful. He pins you to the floor, his claws at your neck, and he leans in close.",
+    f"'I have ruled this land for centuries, {player.name}. I have quashed dozens of insurrections and prevented hundreds more.'",
+    "'Imagine the arrogance to think you, a {player.class_name}, were somehow different from the rest.'",
+    "'No matter. You think since your demise is imminent, you are free, but you are not. The mists don't just cage the living. They cage everything.'",
+    "'Now your soul can spend eternity trapped in this place like me!'",
+  ]
+strahd_wins_claw = Exposition(
+  name="strahd_wins_claw",
+  lines=_get_strahd_wins_claw_lines(),
+  description="What player sees when Strahd wins with a claw"
+)
 
 #strahd battle weariness
 def strahd_status(current_hp, max_hp):
@@ -88,25 +128,6 @@ def strahd_status(current_hp, max_hp):
 
 
 #--------------------------------------POST BATTLE OUTROS----------------------------------------
-
-
-#player win outro
-def player_wins():
-  """describes Strahd's final moments"""
-
-  print("STRAHD FALLS TO THE GROUND.")
-  time.sleep(3)
-  print("His claws twitch. His head lolls to the side.")
-  time.sleep(2)
-  print("Suddenly...")
-  time.sleep(2)
-  print("He bursts into a cloud of smoke. The smoke hangs in the air, lingering a moment... and it feels like it's looking at you.")
-  time.sleep(2)
-  print("With haste, it moves for the door and fills the cracks and keyholes.")
-  time.sleep(2)
-  print("Then it's gone.")
-  time.sleep(3)
-  print("You look outside and for the first time in months you see... sunlight.")
 
 
 #strahd final blow claw outro
@@ -149,4 +170,4 @@ def ending_sequence(p_hp, last_move, p_name, p_class):
     elif last_move == "claw":
       strahd_wins_claw(p_name, p_class)
   else:
-    player_wins()
+    player_wins.play()
