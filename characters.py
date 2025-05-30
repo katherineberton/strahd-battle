@@ -7,7 +7,6 @@ class MoveResult(NamedTuple):
     strahd_stunned: bool
 
 class PlayerClass:
-    class_name: str
     current_hp: int
     max_hp: int
     armor_class: int
@@ -17,25 +16,9 @@ class PlayerClass:
     max_specials: int
     current_specials: int
 
-    def __init__(
-        self,
-        class_name,
-        max_hp,
-        armor_class,
-        attack_mod,
-        attacks_per_attack_action,
-        damage_dice,
-        max_specials
-    ):
-        self.class_name = class_name
-        self.max_hp = max_hp
-        self.current_hp = max_hp
-        self.armor_class = armor_class
-        self.attack_mod = attack_mod
-        self.attacks_per_attack_action = attacks_per_attack_action
-        self.damage_dice = damage_dice
-        self.max_specials = max_specials
-        self.current_specials = max_specials
+    def __init__(self):
+        self.current_hp = self.max_hp
+        self.current_specials = self.max_specials
 
     def attack_roll(self):
         input("Roll your d20 to try to hit by pressing ENTER. ")
@@ -65,6 +48,13 @@ class PlayerClass:
         self.current_hp -= damage
 
 class Fighter(PlayerClass):
+    max_hp = 30
+    armor_class = 20
+    attack_mod = 9
+    attacks_per_attack_action = 3
+    damage_dice = 6
+    max_specials = 3
+
     def special(self):
         print("You use Second Wind!")
         input("Roll a D4 by pressing ENTER. ")
@@ -77,6 +67,13 @@ class Fighter(PlayerClass):
         return MoveResult(damage=0, strahd_stunned=False)
 
 class Caster(PlayerClass):
+    max_hp = 25
+    armor_class = 17
+    attack_mod = 8
+    attacks_per_attack_action = 2
+    damage_dice = 8
+    max_specials = 2
+
     def special(self):
         print("A massive cylinder of searing light appears around Strahd.")
         input("Press ENTER to roll for damage. ")
@@ -93,6 +90,13 @@ class Caster(PlayerClass):
         return MoveResult(damage=dawn_damage, status_effect=None)
 
 class Monk(PlayerClass):
+    max_hp = 25
+    armor_class = 20
+    attack_mod = 9
+    attacks_per_attack_action = 5
+    damage_dice = 4
+    max_specials = 3
+
     def special(self, competing_ac: int):
         if self.attack_roll(self.attack_mod) >= competing_ac:
             damage = random.randint(1,10)
