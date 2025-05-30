@@ -59,8 +59,8 @@ MONK_ATTRIBUTES = {"CLASS": "Monk",
 
 #------------------------------------INTRO AND SETUP----------------------------------------
 
-strahd_ascii('strahd_ascii.txt')
-strahd_monologue()
+ascii_art.print()
+intro_monologue.play()
 
 #prompting for player's name after printing Strahd's opening monologue for style reasons
 player_name = ask_for_name().title()
@@ -90,7 +90,7 @@ elif player_class.lower() == MONK_ATTRIBUTES["CLASS"].lower():
   PLAYER_DAMAGE_DICE = MONK_ATTRIBUTES["DAMAGE DICE"]
   player_special_count = MONK_ATTRIBUTES["MAX SPECIALS"]
 
-conceit()
+conceit.print()
 
 player_initiative = initiative_roll(competing_initiative=strahd_initiative)
 

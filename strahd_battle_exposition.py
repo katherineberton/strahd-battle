@@ -2,49 +2,58 @@ from fileinput import filename
 import random
 import time
 
-#ask simon if it's poor form to have a function that needs so many parameters
+
+class Exposition:
+  name: str
+  description: str
+  lines: list[str]
+
+  def __init__(self, name: str, lines: list[str], description: str = ''):
+    self.name = name
+    self.lines = lines
+    self.description = description
+
+  def play(self):
+    line_idx = 0
+    while line_idx < len(self.lines):
+      print(self.lines[line_idx])
+      time.sleep(2)
+      line_idx += 1
+
+  def print(self):
+    for line in self.lines:
+      print(line.rstrip('\n'))
 
 
-
-#-----------------------------------INTRODUCTIONS AND INFORMATION------------------------------------------
-
-
-#strahd_ascii
-def strahd_ascii(filename):
-  for line in open(filename):
-    print(line, end="")
-
-
-#strahd intro
-def strahd_monologue():
-  """Strahd intro monologue"""
-  print("'You.'")
-  time.sleep(2)
-  print("'You have been a thorn in my side since you came to Barovia.'")
-  time.sleep(2)
-  print("'I invited you into my home. I have been a gracious host. And despite this...'")
-  time.sleep(2)
-  print("'You CONTINUE TO DEFY ME.'")
-  time.sleep(2)
-  print("'You rebuff my extensions of grace, you disrupt local businesses, you upset my citizens, and you damage local ecosystems.'")
-  time.sleep(2)
-  print("'I thought we could be useful to each other. It's clear that you are far more trouble than you're worth.'")
-  time.sleep(2)
-  print("'Now die, and your soul will be mine forever.'")
-  time.sleep(3)
-  print("Strahd lunges at you.")
-  print("----------------------------------------------------------------")
-  print()
-
-
-#game explanation
-def conceit():
-  """explains the stakes of the fight"""
-  print("The time has come! This is your last chance to escape Barovia and go home!")
-  print("He's strong, but so are you. You can do this.")
-  print("If you defeat him, the mists will dissipate, and you'll be free.")
-  print()
-
+ascii_art = Exposition(
+  name='ascii_art',
+  lines=open('assets/strahd_ascii.txt'),
+  description="Strahd art"
+)
+intro_monologue = Exposition(
+  name='intro_monologue',
+  lines=[
+    "\n'You.'",
+    "'You have been a thorn in my side since you came to Barovia.'",
+    "'I invited you into my home. I have been a gracious host. And despite this...'",
+    "'You CONTINUE TO DEFY ME.'",
+    "'You rebuff my extensions of grace, you disrupt local businesses, you upset my citizens, and you damage local ecosystems.'",
+    "'I thought we could be useful to each other. It's clear that you are far more trouble than you're worth.'",
+    "'Now die, and your soul will be mine forever.'",
+    "Strahd lunges at you. \n----------------------------------------------------------------\n",
+  ],
+  description='Strahd airs his grievances'
+)
+conceit = Exposition(
+  name="conceit",
+  lines=[
+    "The time has come! This is your last chance to escape Barovia and go home!",
+    "He's strong, but so are you. You can do this.",
+    "If you defeat him, the mists will dissipate, and you'll be free.",
+    "",
+  ],
+  description="Describes the stakes of the fight"
+)
 
 #class options
 def describe_classes():
