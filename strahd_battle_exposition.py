@@ -1,7 +1,5 @@
-from fileinput import filename
-import random
 import time
-
+from characters import  Fighter, Caster, Monk
 
 class Exposition:
   name: str
@@ -55,23 +53,21 @@ conceit = Exposition(
   description="Describes the stakes of the fight"
 )
 
-#class options
-def describe_classes():
-  
-  print("What's your specialty? Options:")
-  print()
-  print("FIGHTER")
-  print("Attack: swing three times with your sword (unlimited).")
-  print("Special: use Second Wind to gain HP (three times max).")
-  print()
-  print("CASTER")
-  print("Attack: fire two Eldritch Blasts (unlimited).")
-  print("Special: envelop Strahd in sunlight with Dawn (twice max).")
-  print()
-  print("MONK")
-  print("Attack: punch five times in a flurry of blows (unlimited).")
-  print("Special: paralyze Strahd for a turn with a Stunning Strike (three times max).")
-  print("")
+
+def _get_describe_classes_lines():
+  all_classes = [Fighter().details, Caster().details, Monk().details]
+  lines = ["What's your specialty? Options:", ""]
+  for player_class in all_classes:
+    lines.append(f"{player_class.name}")
+    lines.append(f"Attack: {player_class.attack}")
+    lines.append(f"Special: {player_class.special}")
+    lines.append("")
+  return lines
+classes = Exposition(
+  name="classes",
+  lines=_get_describe_classes_lines(),
+  description="Describes the classes"
+)
 
 
 #strahd battle weariness

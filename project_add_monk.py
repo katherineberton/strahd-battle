@@ -64,7 +64,7 @@ intro_monologue.play()
 
 #prompting for player's name after printing Strahd's opening monologue for style reasons
 player_name = ask_for_name().title()
-describe_classes()
+classes.print()
 player_class = ask_for_class(options=class_options)
 
 #declares other attributes based on the player's class choice
