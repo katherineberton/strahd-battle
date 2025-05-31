@@ -1,46 +1,53 @@
-import time
 import random
 from strahd_battle_exposition import *
-from strahd_battle_player_functions import *
-from strahd_battle_strahd_functions import *
 from prompts import ask_for_name, ask_for_class, initiative_roll
-from characters import Strahd
+from characters import Strahd, PlayerClass
 
 
+class Gameplay:
+  turn_count: int = 0
+  
+  strahd_initiative: int
 
-#----------------------------BASIC GAMEPLAY MECHANIC DETIALS------------------------------
+  player: PlayerClass
+  player_initiative: int
+  player_turn_mod: int
 
+  def __init__(self):
+    self.strahd_initiative = random.randint(1,20)
 
+  def get_player_initiative(self):
+    self.player_initiative = initiative_roll(competing_initiative=self.strahd_initiative)
 
+    # If player goes first, player goes on even turns, or turns where turn_count % 2 == 0.
+    # Otherwise, player goes on odd turns, or turns where turn_count % 2 == 1.
+    self.player_turn_mod = 0 if self.player_initiative > self.strahd_initiative else 1
 
-#battle counters or other details
-turn_count = 0
-strahd_initiative = random.randint(1,20)
-strahd_last_move = ""
+  def is_players_turn(self):
+    return self.turn_count % 2 == self.player_turn_mod
+  
+  def increment_turn(self):
+    self.turn_count += 1
+
+  def intro(self):
+    ascii_art.print()
+    intro_monologue.play()
+
 
 
 #------------------------------------INTRO AND SETUP----------------------------------------
+game = Gameplay()
 
-# ascii_art.print()
-# intro_monologue.play()
+game.intro()
 
 player_name = ask_for_name().title()
-# classes.print()
+classes.print()
 player = ask_for_class(player_name)
 
 conceit.print()
 
+game.get_player_initiative()
 strahd = Strahd(name="Strahd")
-player_initiative = initiative_roll(competing_initiative=strahd_initiative)
-
-#if player goes first, player goes on even turns, or turns where turn_count % 2 == 0.
-#otherwise, player goes on odd turns, or turns where turn_count % 2 == 1.
-#assign player_turn_mod accordingly.
-if player_initiative > strahd_initiative:
-  player_turn_mod = 0
-else:
-  player_turn_mod = 1
-
 
 
 #------------------------------GAMEPLAY/TURN ALTERNATOR-------------------------------------
@@ -48,7 +55,7 @@ else:
 
 while player.current_hp > 0 and strahd.current_hp > 0: #While both Strahd and player are up and fighting
   # If it's currently player's turn:
-  if turn_count % 2 == player_turn_mod:
+  if game.is_players_turn():
     while True: #loop to capture invalid choices (miskeys or attempts to SPECIAL too many times)
       player_move = input("What would you like to do? ATTACK or SPECIAL? ")
 
@@ -82,7 +89,7 @@ while player.current_hp > 0 and strahd.current_hp > 0: #While both Strahd and pl
     if player.current_hp > 0:
       print(f"Your remaining hp: {player.current_hp}.")
 
-  turn_count += 1 #increment turn count
+  game.increment_turn()
 
 ending_sequence(p_hp=player.current_hp,
                 last_move=strahd.last_move,
