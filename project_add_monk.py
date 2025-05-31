@@ -12,8 +12,10 @@ class Gameplay:
   player_turn_mod: int
 
   player: PlayerClass
+  strahd: Strahd
 
   def __init__(self):
+    self.strahd = Strahd(name="Strahd")
     self.strahd_initiative = random.randint(1,20)
 
   def set_player(self):
@@ -38,52 +40,61 @@ class Gameplay:
     ascii_art.print()
     intro_monologue.play()
 
-game = Gameplay()
-strahd = Strahd(name="Strahd")
+    self.set_player()
 
-game.intro()
-game.set_player()
-conceit.print()
-game.set_player_initiative()
+    conceit.print()
 
-#------------------------------GAMEPLAY/TURN ALTERNATOR-------------------------------------
+    self.set_player_initiative()
 
-while game.player.current_hp > 0 and strahd.current_hp > 0: #While both Strahd and player are up and fighting
-  # If it's currently player's turn:
-  if game.is_players_turn():
-    while True: #loop to capture invalid choices (miskeys or attempts to SPECIAL too many times)
-      player_move = input("What would you like to do? ATTACK or SPECIAL? ")
 
-      if player_move.lower() == "attack":
-        strahd.take_damage(game.player.attack_action(competing_ac=strahd.armor_class))
-        strahd_status(current_hp=strahd.current_hp, max_hp=strahd.max_hp)
-        print()
-        break
+  def outro(self):
+    ending_sequence(player=self.player, last_move=self.strahd.last_move)
 
-      elif player_move.lower() == "special":
-        if game.player.current_specials <= 0:
-          print("No specials left!")
-        else:
-          results = game.player.special(competing_ac=strahd.armor_class)
-          strahd.take_damage(results.damage)
-          strahd.stunned = results.stunned
-          break
+  def turn_alternator(self):
+    while self.player.current_hp > 0 and self.strahd.current_hp > 0: #While both Strahd and player are up and fighting
+      # If it's currently player's turn:
+      if self.is_players_turn():
+        while True: #loop to capture invalid choices (miskeys or attempts to SPECIAL too many times)
+          player_move = input("What would you like to do? ATTACK or SPECIAL? ")
 
+          if player_move.lower() == "attack":
+            self.strahd.take_damage(self.player.attack_action(competing_ac=self.strahd.armor_class))
+            strahd_status(current_hp=self.strahd.current_hp, max_hp=self.strahd.max_hp)
+            print()
+            break
+
+          elif player_move.lower() == "special":
+            if self.player.current_specials <= 0:
+              print("No specials left!")
+            else:
+              results = self.player.special(competing_ac=self.strahd.armor_class)
+              self.strahd.take_damage(results.damage)
+              self.strahd.stunned = results.stunned
+              strahd_status(current_hp=self.strahd.current_hp, max_hp=self.strahd.max_hp)
+              break
+
+          else:
+            print("That's not in your moveset.")
+
+      # If it's currently Strahd's turn
       else:
-        print("That's not in your moveset.")
+        if self.strahd.stunned == False:
+            self.player.take_damage(self.strahd.attack(competing_ac=self.player.armor_class))
+        else:
+            print("Strahd is stunned! He strains to lunge at you but he's too stiff to move.")
+            print()
+            self.strahd.stunned = False # Remove stunned status after one turn
 
-  # If it's currently Strahd's turn
-  else:
-    if strahd.stunned == False:
-        game.player.take_damage(strahd.attack(competing_ac=game.player.armor_class))
-    else:
-        print("Strahd is stunned! He strains to lunge at you but he's too stiff to move.")
-        print()
-        strahd.stunned = False # Remove stunned status after one turn
+        if self.player.current_hp > 0:
+          print(f"Your remaining hp: {self.player.current_hp}.")
 
-    if game.player.current_hp > 0:
-      print(f"Your remaining hp: {game.player.current_hp}.")
+      self.increment_turn()
 
-  game.increment_turn()
+  def play(self):
+    self.intro()
+    self.turn_alternator()
+    self.outro()
 
-ending_sequence(player=game.player, last_move=strahd.last_move)
+
+game = Gameplay()
+game.play()

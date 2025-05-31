@@ -131,7 +131,6 @@ def strahd_status(current_hp, max_hp):
 #--------------------------------------POST BATTLE OUTROS----------------------------------------
 
 
-#strahd final blow claw outro
 def strahd_wins_claw(player: PlayerClass):
   """describes player's final moments with a claw swipe as Strahd's final action"""
 
@@ -146,7 +145,6 @@ def strahd_wins_claw(player: PlayerClass):
   print("'Now your soul can spend eternity trapped in this place like me!'")
 
 
-#strahd final blow bite outro
 def strahd_wins_bite(player: PlayerClass):
   """describes player's final moments with a bite as Strahd's final action"""
 
