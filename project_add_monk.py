@@ -8,10 +8,10 @@ class Gameplay:
   turn_count: int = 0
   
   strahd_initiative: int
-
-  player: PlayerClass
   player_initiative: int
   player_turn_mod: int
+
+  player: PlayerClass
 
   def __init__(self):
     self.strahd_initiative = random.randint(1,20)
@@ -91,7 +91,4 @@ while player.current_hp > 0 and strahd.current_hp > 0: #While both Strahd and pl
 
   game.increment_turn()
 
-ending_sequence(p_hp=player.current_hp,
-                last_move=strahd.last_move,
-                p_name=player.name,
-                p_class=player.class_name)
+ending_sequence(player=player, last_move=strahd.last_move)

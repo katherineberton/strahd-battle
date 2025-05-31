@@ -1,5 +1,5 @@
 import time
-from typing import Optional
+from typing import Optional, Literal
 from characters import  Fighter, Caster, Monk, PlayerClass
 
 class Exposition:
@@ -132,14 +132,14 @@ def strahd_status(current_hp, max_hp):
 
 
 #strahd final blow claw outro
-def strahd_wins_claw(p_name, p_class):
+def strahd_wins_claw(player: PlayerClass):
   """describes player's final moments with a claw swipe as Strahd's final action"""
 
   print("Strahd is just too powerful. He pins you to the floor, his claws at your neck, and he leans in close.")
   time.sleep(2)
-  print(f"'I have ruled this land for centuries, {p_name}. I have quashed dozens of insurrections and prevented hundreds more.'")
+  print(f"'I have ruled this land for centuries, {player.name}. I have quashed dozens of insurrections and prevented hundreds more.'")
   time.sleep(2)
-  print(f"'Imagine the arrogance to think you, a {p_class}, were somehow different from the rest.'")
+  print(f"'Imagine the arrogance to think you, a {player.class_name}, were somehow different from the rest.'")
   time.sleep(2)
   print("'No matter. You think since your demise is imminent, you are free, but you are not. The mists don't just cage the living. They cage everything.'")
   time.sleep(2)
@@ -147,28 +147,27 @@ def strahd_wins_claw(p_name, p_class):
 
 
 #strahd final blow bite outro
-def strahd_wins_bite(p_name, p_class):
+def strahd_wins_bite(player: PlayerClass):
   """describes player's final moments with a bite as Strahd's final action"""
 
   print("Strahd is just too strong. He pins you to the floor, his claws at your neck, and he leans in close.")
   time.sleep(2)
-  print(f"'I have ruled this land for centuries, {p_name}. I have quashed dozens of insurrections and prevented hundreds more.'")
+  print(f"'I have ruled this land for centuries, {player.name}. I have quashed dozens of insurrections and prevented hundreds more.'")
   time.sleep(2)
   print("'But you... you are the only one who has come this far.'")
   time.sleep(2)
-  print(f"'Despite our differences, I think you can still serve a purpose. You have some power, {p_class}. Watch me make you even more powerful.'")
+  print(f"'Despite our differences, I think you can still serve a purpose. You have some power, {player.class_name}. Watch me make you even more powerful.'")
   time.sleep(2)
   print("His teeth sink in to your neck. His skin is cold, but your blood starts turning it warm.")
 
 
-#tests conditions at end of game and plays the appropriate outro
-def ending_sequence(p_hp, last_move, p_name, p_class):
+def ending_sequence(player: PlayerClass, last_move: Literal["bite", "claw"]):
   """if player wins then describes Strahd's final moments. if Strahd wins, then describes player's final moment based on strahd's last move."""
 
-  if p_hp <= 0: #if player lost
+  if player.current_hp <= 0:
     if last_move == "bite":
-      strahd_wins_bite(p_name, p_class)
+      strahd_wins_bite(player)
     elif last_move == "claw":
-      strahd_wins_claw(p_name, p_class)
+      strahd_wins_claw(player)
   else:
     player_wins.play()
