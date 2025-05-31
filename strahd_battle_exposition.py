@@ -25,10 +25,25 @@ class Exposition:
       print(line.rstrip('\n'))
 
 
-ascii_art = Exposition(
-  name='ascii_art',
+strahd_ascii = Exposition(
+  name='strahd_ascii',
   lines=open('assets/strahd_ascii.txt'),
   description="Strahd art"
+)
+fighter_ascii = Exposition(
+  name="fighter_ascii",
+  lines=open('assets/fighter_ascii.txt'),
+  description="Fighter art"
+)
+caster_ascii = Exposition(
+  name="caster_ascii",
+  lines=open('assets/caster_ascii.txt'),
+  description="Caster art"
+)
+monk_ascii = Exposition(
+  name="monk_ascii",
+  lines=open('assets/monk_ascii.txt'),
+  description="Monk art"
 )
 intro_monologue = Exposition(
   name='intro_monologue',

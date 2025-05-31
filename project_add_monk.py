@@ -51,7 +51,7 @@ class Gameplay:
     self.turn_count += 1
 
   def intro(self):
-    ascii_art.print()
+    strahd_ascii.print()
     intro_monologue.play()
     self.set_player()
     conceit.print()

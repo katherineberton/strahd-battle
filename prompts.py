@@ -1,5 +1,7 @@
 from characters import Fighter, Caster, Monk
+from strahd_battle_exposition import fighter_ascii, caster_ascii, monk_ascii
 import random
+import time
 
 def ask_for_name():
   name = input("What is your name? ")
@@ -7,9 +9,9 @@ def ask_for_name():
   return name
 
 text_to_class_map = {
-  "fighter": Fighter,
-  "caster": Caster,
-  "monk": Monk,
+  "fighter": {"player_class": Fighter, "ascii": fighter_ascii},
+  "caster": {"player_class": Caster, "ascii": caster_ascii},
+  "monk": {"player_class": Monk, "ascii": monk_ascii},
 }
 
 def ask_for_class(player_name):
@@ -24,9 +26,12 @@ def ask_for_class(player_name):
       selected_class = text_to_class_map[class_choice.lower()]
       break
   print(f"Great, a powerful {class_choice.lower()}.")
+  time.sleep(1)
+  selected_class["ascii"].print()
+  time.sleep(1)
   print()
 
-  return selected_class(name=player_name)
+  return selected_class["player_class"](name=player_name)
 
 def initiative_roll(competing_initiative):
   """prompts the player with "input" to roll a d20 to see who goes first."""
