@@ -4,7 +4,7 @@ import time
 
 class MoveResult(NamedTuple):
     damage: int
-    strahd_stunned: bool
+    stunned: bool
 
 class PlayerClassDescription(NamedTuple):
     name: str
@@ -14,15 +14,20 @@ class PlayerClassDescription(NamedTuple):
 class PlayerClass:
     name: Optional[str]
     class_name: str
-    current_hp: int
-    max_hp: int
     armor_class: int
+
+    max_hp: int
+    current_hp: int
+
     attack_mod: int
     attacks_per_attack_action: int
     damage_dice: Literal[4, 6, 8, 10, 12]
-    max_specials: int
-    current_specials: int
+    number_of_damage_dice: int = 1
+    damage_modifier: int = 0
     attack_move_description: str
+
+    current_specials: int
+    max_specials: int
     special_move_description: str
 
     def __init__(self, name: Optional[str] = None):
@@ -44,8 +49,13 @@ class PlayerClass:
         while attack_counter < self.attacks_per_attack_action:
             if self.attack_roll() >= competing_ac:
                 print("You hit!")
-                damage = random.randint(1,self.damage_dice)
-                attack_damage_accumulator += damage
+
+                single_atk_dmg_accumulator = 0
+                for _ in range(self.number_of_damage_dice):
+                    single_atk_dmg_accumulator += random.randint(1,self.damage_dice)
+                single_atk_dmg_accumulator += self.damage_modifier
+
+                attack_damage_accumulator += single_atk_dmg_accumulator
             else:
                 print("Ouch, you missed.")
             attack_counter += 1
@@ -90,7 +100,7 @@ class Fighter(PlayerClass):
         self.current_hp += hp_gain
 
         super().special(competing_ac)
-        return MoveResult(damage=0, strahd_stunned=False)
+        return MoveResult(damage=0, stunned=False)
     
 
 class Caster(PlayerClass):
@@ -119,7 +129,7 @@ class Caster(PlayerClass):
         time.sleep(1)
 
         super().special(competing_ac)
-        return MoveResult(damage=dawn_damage, strahd_stunned=False)
+        return MoveResult(damage=dawn_damage, stunned=False)
 
 class Monk(PlayerClass):
     class_name = "monk"
@@ -139,8 +149,68 @@ class Monk(PlayerClass):
             print("You hit!")
             print(f"You did {damage} damage.")
             print()
-            return MoveResult(damage=damage, strahd_stunned=True)
+            return MoveResult(damage=damage, stunned=True)
         else:
             print("Your punch bounces off his armor and Strahd shakes off the stun.")
             print()
-            return MoveResult(damage=0, strahd_stunned=False)
+            return MoveResult(damage=0, stunned=False)
+        
+
+class Strahd(PlayerClass):
+    class_name = "strahd"
+    max_hp = 40
+    armor_class = 16
+    attack_mod = 12
+    attacks_per_attack_action = 2
+    damage_dice = 4
+    number_of_damage_dice = 1
+    damage_modifier = 2
+    max_specials = 2
+    last_move: Optional[Literal["bite", "claw"]] = None
+    stunned: bool = False
+
+    def attack(self, competing_ac: int):
+        """randomizes Strahd's claw attack or bite attack"""
+
+        if random.choice(['bite', 'claw']) == 'claw':
+            dmg = self.attack_action(competing_ac)
+        else:
+            dmg = self.special(competing_ac)
+        
+        print()
+        time.sleep(1)
+        return dmg
+
+    # Overriding the attack_action method for additional exposition
+    def attack_action(self, competing_ac: int) -> int:
+        print("Strahd extends his claws and rears back with both hands.")
+
+        claw_damage_accumulator = 0
+        attack_counter = 0
+
+        while attack_counter < self.attacks_per_attack_action:
+            attack_to_hit = random.randint(1,20) + self.attack_mod
+            if attack_to_hit >= competing_ac:
+                print("Strahd slashes at you with a claw.")
+                damage = random.randint(1,4) + 2
+                claw_damage_accumulator += damage
+            else:
+                print("You are just out of his reach!")
+            attack_counter += 1
+        
+        print(f"Strahd did {claw_damage_accumulator} damage.")
+        self.last_move = "claw"
+        return claw_damage_accumulator
+    
+    def special(self, competing_ac: int) -> MoveResult:
+        bite_damage = 0
+        if random.randint(1,20) + self.attack_mod >= competing_ac:
+            print("Strahd sinks his fangs into you!")
+            bite_damage += random.randint(1,6)
+            bite_damage += random.randint(1,6)
+            print(f"Strahd did {bite_damage} damage.")
+
+        else:
+            print("Strahd lunges for your exposed neck but misses!")
+        self.last_move = "bite"
+        return bite_damage
