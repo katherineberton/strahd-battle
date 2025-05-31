@@ -1,5 +1,5 @@
 import random
-from strahd_battle_exposition import *
+from exposition import *
 from prompts import ask_for_name, ask_for_class, initiative_roll
 from characters import Strahd, PlayerClass
 

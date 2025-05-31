@@ -1,5 +1,5 @@
 from characters import Fighter, Caster, Monk
-from strahd_battle_exposition import fighter_ascii, caster_ascii, monk_ascii
+from exposition import fighter_ascii, caster_ascii, monk_ascii
 import random
 import time
 
