@@ -53,6 +53,7 @@ def initiative_roll(competing_initiative):
       else:
         print("He is just too fast!")
       break
+  time.sleep(2)
   print()
 
   return initiative
