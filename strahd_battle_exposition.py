@@ -6,6 +6,7 @@ class Exposition:
   name: str
   description: str
   lines: list[str]
+  player: Optional[PlayerClass]
 
   def __init__(self, name: str, lines: list[str], description: str = ''):
     self.name = name
@@ -110,22 +111,6 @@ strahd_wins_claw = Exposition(
   lines=_get_strahd_wins_claw_lines(),
   description="What player sees when Strahd wins with a claw"
 )
-
-#strahd battle weariness
-def strahd_status(current_hp, max_hp):
-  """lets the player know how roughed up Strahd looks by his remaining HP"""
-
-  if current_hp/max_hp > .75:
-    pass
-  elif .5 < current_hp/max_hp <= .75:
-    print("Strahd seems enraged.")
-  elif .25 <= current_hp/max_hp <= .5:
-    print("You can see fear in Strahd's eyes.")
-  elif current_hp <= 0:
-    pass
-  else:
-    print("Strahd can barely stand. Finish him!")
-
 
 
 #--------------------------------------POST BATTLE OUTROS----------------------------------------

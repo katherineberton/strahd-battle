@@ -33,17 +33,28 @@ class Gameplay:
   def is_players_turn(self):
     return self.turn_count % 2 == self.player_turn_mod
   
+  def report_strahd_status(self):
+    if self.strahd.current_hp <= 0:
+      return
+    
+    percent_left = self.strahd.current_hp/self.strahd.max_hp
+    if percent_left > .75:
+      pass
+    elif .5 < percent_left <= .75:
+      print("Strahd seems enraged.")
+    elif .25 <= percent_left <= .5:
+      print("You can see fear in Strahd's eyes.")
+    else:
+      print("Strahd can barely stand. Finish him!")
+
   def increment_turn(self):
     self.turn_count += 1
 
   def intro(self):
     ascii_art.print()
     intro_monologue.play()
-
     self.set_player()
-
     conceit.print()
-
     self.set_player_initiative()
 
 
@@ -52,43 +63,45 @@ class Gameplay:
 
   def turn_alternator(self):
     while self.player.current_hp > 0 and self.strahd.current_hp > 0: #While both Strahd and player are up and fighting
-      # If it's currently player's turn:
       if self.is_players_turn():
-        while True: #loop to capture invalid choices (miskeys or attempts to SPECIAL too many times)
-          player_move = input("What would you like to do? ATTACK or SPECIAL? ")
-
-          if player_move.lower() == "attack":
-            self.strahd.take_damage(self.player.attack_action(competing_ac=self.strahd.armor_class))
-            strahd_status(current_hp=self.strahd.current_hp, max_hp=self.strahd.max_hp)
-            print()
-            break
-
-          elif player_move.lower() == "special":
-            if self.player.current_specials <= 0:
-              print("No specials left!")
-            else:
-              results = self.player.special(competing_ac=self.strahd.armor_class)
-              self.strahd.take_damage(results.damage)
-              self.strahd.stunned = results.stunned
-              strahd_status(current_hp=self.strahd.current_hp, max_hp=self.strahd.max_hp)
-              break
-
-          else:
-            print("That's not in your moveset.")
-
-      # If it's currently Strahd's turn
+        self.player_move()
       else:
-        if self.strahd.stunned == False:
-            self.player.take_damage(self.strahd.attack(competing_ac=self.player.armor_class))
-        else:
-            print("Strahd is stunned! He strains to lunge at you but he's too stiff to move.")
-            print()
-            self.strahd.stunned = False # Remove stunned status after one turn
-
-        if self.player.current_hp > 0:
-          print(f"Your remaining hp: {self.player.current_hp}.")
-
+        self.strahd_move()
       self.increment_turn()
+
+  def player_move(self):
+    while True: #loop to capture invalid choices (miskeys or attempts to SPECIAL too many times)
+      player_move = input("What would you like to do? ATTACK or SPECIAL? ")
+
+      if player_move.lower() == "attack":
+        self.strahd.take_damage(self.player.attack_action(competing_ac=self.strahd.armor_class))
+        self.report_strahd_status()
+        print()
+        break
+
+      elif player_move.lower() == "special":
+        if self.player.current_specials <= 0:
+          print("No specials left!")
+        else:
+          results = self.player.special(competing_ac=self.strahd.armor_class)
+          self.strahd.take_damage(results.damage)
+          self.strahd.stunned = results.stunned
+          self.report_strahd_status()
+          break
+
+      else:
+        print("That's not in your moveset.")
+
+  def strahd_move(self):
+    if self.strahd.stunned == False:
+      self.player.take_damage(self.strahd.attack(competing_ac=self.player.armor_class))
+    else:
+      print("Strahd is stunned! He strains to lunge at you but he's too stiff to move.")
+      print()
+      self.strahd.stunned = False # Remove stunned status after one turn
+
+    if self.player.current_hp > 0:
+      print(f"Your remaining hp: {self.player.current_hp}.")
 
   def play(self):
     self.intro()
