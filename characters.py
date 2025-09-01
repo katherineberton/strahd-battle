@@ -104,7 +104,7 @@ class Fighter(PlayerClass):
     
 
 class Caster(PlayerClass):
-    class_name = "fighter"
+    class_name = "caster"
     max_hp = 25
     armor_class = 17
     attack_mod = 8
