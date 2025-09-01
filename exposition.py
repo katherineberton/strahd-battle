@@ -102,9 +102,9 @@ player_wins = Exposition(
 def _get_strahd_wins_bite_lines(player: Optional[PlayerClass] = None):
   return [
     "Strahd is just too strong. He pins you to the floor, his claws at your neck, and he leans in close.",
-    f"'I have ruled this land for centuries, {player.name if player else 'bitch'}. I have quashed dozens of insurrections and prevented hundreds more.'",
+    f"'I have ruled this land for centuries, {player.name}. I have quashed dozens of insurrections and prevented hundreds more.'",
     "'But you... you are the only one who has come this far.'",
-    f"'Despite our differences, I think you can still serve a purpose. You have some power, {player.class_name if player else 'stupid fuck'}. Watch me make you even more powerful.'",
+    f"'Despite our differences, I think you can still serve a purpose. You have some power, {player.class_name}. Watch me make you even more powerful.'",
     "His teeth sink in to your neck. His skin is cold, but your blood starts turning it warm.",
   ]
 strahd_wins_bite = Exposition(
@@ -116,8 +116,8 @@ strahd_wins_bite = Exposition(
 def _get_strahd_wins_claw_lines(player: Optional[PlayerClass] = None):
   return [
     "Strahd is just too powerful. He pins you to the floor, his claws at your neck, and he leans in close.",
-    f"'I have ruled this land for centuries, {player.name if player else 'bitch'}. I have quashed dozens of insurrections and prevented hundreds more.'",
-    f"'Imagine the arrogance to think you, a {player.class_name if player else 'stupid fuck'}, were somehow different from the rest.'",
+    f"'I have ruled this land for centuries, {player.name}. I have quashed dozens of insurrections and prevented hundreds more.'",
+    f"'Imagine the arrogance to think you, a {player.class_name}, were somehow different from the rest.'",
     "'No matter. You think since your demise is imminent, you are free, but you are not. The mists don't just cage the living. They cage everything.'",
     "'Now your soul can spend eternity trapped in this place like me!'",
   ]
@@ -128,44 +128,13 @@ strahd_wins_claw = Exposition(
 )
 
 
-#--------------------------------------POST BATTLE OUTROS----------------------------------------
-
-
-def strahd_wins_claw(player: PlayerClass):
-  """describes player's final moments with a claw swipe as Strahd's final action"""
-
-  print("Strahd is just too powerful. He pins you to the floor, his claws at your neck, and he leans in close.")
-  time.sleep(2)
-  print(f"'I have ruled this land for centuries, {player.name}. I have quashed dozens of insurrections and prevented hundreds more.'")
-  time.sleep(2)
-  print(f"'Imagine the arrogance to think you, a {player.class_name}, were somehow different from the rest.'")
-  time.sleep(2)
-  print("'No matter. You think since your demise is imminent, you are free, but you are not. The mists don't just cage the living. They cage everything.'")
-  time.sleep(2)
-  print("'Now your soul can spend eternity trapped in this place like me!'")
-
-
-def strahd_wins_bite(player: PlayerClass):
-  """describes player's final moments with a bite as Strahd's final action"""
-
-  print("Strahd is just too strong. He pins you to the floor, his claws at your neck, and he leans in close.")
-  time.sleep(2)
-  print(f"'I have ruled this land for centuries, {player.name}. I have quashed dozens of insurrections and prevented hundreds more.'")
-  time.sleep(2)
-  print("'But you... you are the only one who has come this far.'")
-  time.sleep(2)
-  print(f"'Despite our differences, I think you can still serve a purpose. You have some power, {player.class_name}. Watch me make you even more powerful.'")
-  time.sleep(2)
-  print("His teeth sink in to your neck. His skin is cold, but your blood starts turning it warm.")
-
-
 def ending_sequence(player: PlayerClass, last_move: Literal["bite", "claw"]):
   """if player wins then describes Strahd's final moments. if Strahd wins, then describes player's final moment based on strahd's last move."""
 
   if player.current_hp <= 0:
     if last_move == "bite":
-      strahd_wins_bite(player)
+      strahd_wins_bite.play()
     elif last_move == "claw":
-      strahd_wins_claw(player)
+      strahd_wins_claw.play()
   else:
     player_wins.play()
